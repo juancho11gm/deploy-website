@@ -150,4 +150,9 @@ jobs:
 
 ![image](https://user-images.githubusercontent.com/36536646/80144050-72160380-8573-11ea-91bd-c517acc2f796.png)
 
-2. Follow the steps.
+2. Add the verification to the DNS in GoDaddy.
+
+![image](https://user-images.githubusercontent.com/36536646/80146722-dfc42e80-8577-11ea-9165-dcb7b81369a6.png)
+
+3. Add the `A` registers pointing to the values.
+* If you have problems change the `name` to `@`
