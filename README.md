@@ -1,6 +1,6 @@
 # Deploy your first website
 
-Deploy your first website with Firebase. We are going to use GitHub, Firebase, Travis CI, Nodejs and GoDaddy like tech tools.
+Deploy your first website with Firebase. We are going to use GitHub, Firebase, Travis CI or GitHub Actions, Nodejs and GoDaddy like tech tools.
 
 ## Steps to deploy your first website using Firebase
 
@@ -17,7 +17,7 @@ Deploy your first website with Firebase. We are going to use GitHub, Firebase, T
     * Deploy with `firebase deploy`.
 5. Remove the content inside `index.html` in the `public`. Create a basic layout and deploy again.
 
-## Steps to deploy automatic builds using Travis CI
+## Steps to deploy automatic builds
 
 ### NodeJs
 
@@ -67,7 +67,7 @@ function copy_files(sourcePath, destPath){
 7.1 Add into the scripts attribute: `"prepare-public": "node prepare.js"`.
 7.2 Try it. Run `npm run prepare-public`.
 
-## Travis CI
+## Option 1 Travis CI (public repo for free)
 
 1. Sign up to [Travis](https://travis-ci.org/).
 2. Select your repo and authorize Travis CI
@@ -77,7 +77,7 @@ function copy_files(sourcePath, destPath){
 3. Generate the firebase token running `firebase login:ci`.
 4. Copy the token and add an enviroment variable in Travis
 
-![image](https://user-images.githubusercontent.com/36536646/80138229-1abf6580-856a-11ea-8de1-11c52d6b2ed9.png)
+![image](https://user-images.githubusercontent.com/36536646/80140167-3710d180-856d-11ea-8a3e-0b2a38c26d8e.png)
 
 4. Create a `.travis.yml` file in the root folder.
 5. Paste the following code:
@@ -102,5 +102,52 @@ git add .
 git commit -m "first deploy with Travis"
 git push -u origin master
 `
+## Option 2 GitHub Actions
+
+1. Create a `secret` variable in your repo settings.
+
+![image](https://user-images.githubusercontent.com/36536646/80143903-30855880-8573-11ea-8f35-8b0bb8cf5e58.png)
+
+2. Create an `action` in your Actions tab with the following structure
+
+```
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm install -g firebase-tools
+    - run: npm install
+    - run: npm run prepare-public
+    - run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
+      env:
+        CI: true
+```
+3. Enjoy.
+
 ## Steps to configure your domain using GoDaddy
 
+1. Go to the firebase console and `add a custom domain`
+
+![image](https://user-images.githubusercontent.com/36536646/80144050-72160380-8573-11ea-91bd-c517acc2f796.png)
+
+2. Follow the steps.
